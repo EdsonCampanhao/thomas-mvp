@@ -1,0 +1,1123 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Bebê Diário</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;1,400&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --cream: #fdf6ee;
+    --peach: #f4c9a0;
+    --blush: #f2a68a;
+    --sage: #9ab89a;
+    --lavender: #c4b5d4;
+    --sky: #a8c8dc;
+    --goldenrod: #e8a53a;
+    --text-dark: #3a2e2e;
+    --text-mid: #6b5555;
+    --text-light: #9e8888;
+    --white: #fffdf9;
+    --card-bg: rgba(255,253,249,0.85);
+    --shadow: 0 4px 24px rgba(58,46,46,0.1);
+    --shadow-lg: 0 8px 40px rgba(58,46,46,0.15);
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    background-color: var(--cream);
+    font-family: 'DM Sans', sans-serif;
+    color: var(--text-dark);
+    min-height: 100vh;
+    overflow-x: hidden;
+    position: relative;
+  }
+
+  /* Background decorative elements */
+  body::before {
+    content: '';
+    position: fixed;
+    top: -200px; right: -200px;
+    width: 600px; height: 600px;
+    background: radial-gradient(circle, rgba(244,201,160,0.3) 0%, transparent 70%);
+    pointer-events: none; z-index: 0;
+  }
+  body::after {
+    content: '';
+    position: fixed;
+    bottom: -150px; left: -150px;
+    width: 500px; height: 500px;
+    background: radial-gradient(circle, rgba(196,181,212,0.25) 0%, transparent 70%);
+    pointer-events: none; z-index: 0;
+  }
+
+  /* ─── HEADER ─── */
+  header {
+    position: sticky; top: 0; z-index: 100;
+    background: rgba(253,246,238,0.9);
+    backdrop-filter: blur(12px);
+    border-bottom: 1px solid rgba(244,201,160,0.4);
+    padding: 16px 24px;
+    display: flex; align-items: center; justify-content: space-between;
+  }
+
+  .header-brand {
+    display: flex; align-items: center; gap: 10px;
+  }
+  .brand-icon {
+    width: 40px; height: 40px;
+    background: linear-gradient(135deg, var(--peach), var(--blush));
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 20px;
+    box-shadow: 0 2px 8px rgba(242,166,138,0.4);
+  }
+  .brand-name {
+    font-family: 'Playfair Display', serif;
+    font-size: 22px;
+    color: var(--text-dark);
+    letter-spacing: -0.3px;
+  }
+  .brand-name span { font-style: italic; color: var(--blush); }
+
+  .header-actions { display: flex; gap: 10px; align-items: center; }
+
+  /* ─── BUTTONS ─── */
+  .btn {
+    font-family: 'DM Sans', sans-serif;
+    font-size: 13px;
+    font-weight: 500;
+    border: none;
+    border-radius: 100px;
+    cursor: pointer;
+    padding: 9px 18px;
+    transition: all 0.2s ease;
+    display: inline-flex; align-items: center; gap: 6px;
+  }
+  .btn:active { transform: scale(0.97); }
+
+  .btn-primary {
+    background: linear-gradient(135deg, var(--blush), #e8856d);
+    color: white;
+    box-shadow: 0 4px 14px rgba(242,166,138,0.45);
+  }
+  .btn-primary:hover { box-shadow: 0 6px 20px rgba(242,166,138,0.55); transform: translateY(-1px); }
+
+  .btn-outline {
+    background: transparent;
+    color: var(--text-mid);
+    border: 1.5px solid rgba(107,85,85,0.2);
+  }
+  .btn-outline:hover { background: rgba(107,85,85,0.06); }
+
+  .btn-ghost {
+    background: transparent;
+    color: var(--text-mid);
+    padding: 8px 12px;
+  }
+  .btn-ghost:hover { color: var(--text-dark); background: rgba(0,0,0,0.04); }
+
+  .btn-sm { font-size: 12px; padding: 6px 14px; }
+
+  /* ─── MAIN LAYOUT ─── */
+  main {
+    max-width: 680px;
+    margin: 0 auto;
+    padding: 32px 20px 80px;
+    position: relative; z-index: 1;
+  }
+
+  /* ─── BABY SELECTOR ─── */
+  .baby-bar {
+    display: flex; align-items: center; gap: 10px;
+    margin-bottom: 28px;
+    flex-wrap: wrap;
+  }
+  .baby-chip {
+    display: flex; align-items: center; gap: 8px;
+    background: var(--card-bg);
+    border: 1.5px solid rgba(244,201,160,0.5);
+    border-radius: 100px;
+    padding: 8px 16px;
+    cursor: pointer;
+    transition: all 0.2s;
+    font-size: 14px; font-weight: 500;
+  }
+  .baby-chip.active {
+    background: linear-gradient(135deg, rgba(244,201,160,0.5), rgba(196,181,212,0.4));
+    border-color: var(--peach);
+    box-shadow: var(--shadow);
+  }
+  .baby-chip:hover { transform: translateY(-1px); }
+  .baby-avatar {
+    width: 28px; height: 28px;
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 14px;
+  }
+  .add-baby {
+    width: 42px; height: 42px;
+    border-radius: 50%;
+    background: var(--card-bg);
+    border: 1.5px dashed rgba(107,85,85,0.25);
+    display: flex; align-items: center; justify-content: center;
+    cursor: pointer; font-size: 18px; color: var(--text-light);
+    transition: all 0.2s;
+  }
+  .add-baby:hover { border-color: var(--blush); color: var(--blush); }
+
+  /* ─── TODAY SUMMARY ─── */
+  .today-card {
+    background: linear-gradient(135deg, rgba(168,200,220,0.25), rgba(196,181,212,0.2));
+    border: 1px solid rgba(168,200,220,0.4);
+    border-radius: 24px;
+    padding: 24px;
+    margin-bottom: 28px;
+    position: relative;
+    overflow: hidden;
+  }
+  .today-card::before {
+    content: '🌙';
+    position: absolute; right: 20px; top: 20px;
+    font-size: 48px; opacity: 0.12;
+  }
+  .today-label {
+    font-size: 11px; font-weight: 500;
+    text-transform: uppercase; letter-spacing: 1.5px;
+    color: var(--text-light); margin-bottom: 4px;
+  }
+  .today-date {
+    font-family: 'Playfair Display', serif;
+    font-size: 20px; font-weight: 600;
+    color: var(--text-dark);
+    margin-bottom: 20px;
+  }
+  .stats-row {
+    display: flex; gap: 16px; flex-wrap: wrap;
+  }
+  .stat-pill {
+    display: flex; align-items: center; gap: 7px;
+    background: rgba(255,253,249,0.7);
+    border-radius: 100px;
+    padding: 7px 14px;
+    font-size: 13px; font-weight: 500;
+  }
+  .stat-pill .count {
+    font-family: 'Playfair Display', serif;
+    font-size: 17px; font-weight: 600;
+    color: var(--text-dark);
+  }
+
+  /* ─── SECTION TITLE ─── */
+  .section-header {
+    display: flex; align-items: center; justify-content: space-between;
+    margin-bottom: 16px;
+  }
+  .section-title {
+    font-family: 'Playfair Display', serif;
+    font-size: 18px; color: var(--text-dark);
+  }
+
+  /* ─── ACTIVITY CARDS ─── */
+  .activity-list {
+    display: flex; flex-direction: column; gap: 10px;
+  }
+
+  .activity-card {
+    background: var(--card-bg);
+    border-radius: 18px;
+    padding: 16px 20px;
+    display: flex; align-items: center; gap: 16px;
+    box-shadow: var(--shadow);
+    border: 1px solid rgba(255,255,255,0.8);
+    animation: slideIn 0.35s cubic-bezier(0.34, 1.56, 0.64, 1);
+    position: relative;
+    overflow: hidden;
+  }
+  .activity-card::before {
+    content: '';
+    position: absolute; left: 0; top: 0; bottom: 0;
+    width: 4px;
+    border-radius: 4px 0 0 4px;
+  }
+  .activity-card[data-type="coco"]::before { background: var(--goldenrod); }
+  .activity-card[data-type="xixi"]::before { background: var(--sky); }
+  .activity-card[data-type="amamentacao"]::before { background: var(--blush); }
+  .activity-card[data-type="banho"]::before { background: var(--sage); }
+  .activity-card[data-type="sono"]::before { background: var(--lavender); }
+
+  @keyframes slideIn {
+    from { opacity: 0; transform: translateY(14px) scale(0.97); }
+    to { opacity: 1; transform: translateY(0) scale(1); }
+  }
+
+  .activity-icon-wrap {
+    width: 48px; height: 48px;
+    border-radius: 14px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 22px;
+    flex-shrink: 0;
+  }
+  .activity-card[data-type="coco"] .activity-icon-wrap { background: rgba(232,165,58,0.15); }
+  .activity-card[data-type="xixi"] .activity-icon-wrap { background: rgba(168,200,220,0.2); }
+  .activity-card[data-type="amamentacao"] .activity-icon-wrap { background: rgba(242,166,138,0.2); }
+  .activity-card[data-type="banho"] .activity-icon-wrap { background: rgba(154,184,154,0.2); }
+  .activity-card[data-type="sono"] .activity-icon-wrap { background: rgba(196,181,212,0.25); }
+
+  .activity-info { flex: 1; min-width: 0; }
+  .activity-title {
+    font-weight: 500; font-size: 15px;
+    color: var(--text-dark); margin-bottom: 3px;
+  }
+  .activity-meta {
+    font-size: 12px; color: var(--text-light);
+    display: flex; align-items: center; gap: 8px; flex-wrap: wrap;
+  }
+  .activity-time { font-weight: 500; color: var(--text-mid); }
+  .textura-badge {
+    display: inline-flex; align-items: center; gap: 3px;
+    background: rgba(232,165,58,0.12);
+    color: #c68a1a;
+    border-radius: 6px;
+    padding: 2px 7px;
+    font-size: 11px; font-weight: 500;
+  }
+
+  .delete-btn {
+    width: 30px; height: 30px;
+    border-radius: 50%;
+    background: transparent;
+    border: none; cursor: pointer;
+    color: var(--text-light);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 15px;
+    transition: all 0.2s;
+    flex-shrink: 0;
+  }
+  .delete-btn:hover { background: rgba(220,50,50,0.08); color: #d0453a; }
+
+  .empty-state {
+    text-align: center;
+    padding: 48px 20px;
+    color: var(--text-light);
+  }
+  .empty-state .empty-icon { font-size: 48px; margin-bottom: 12px; }
+  .empty-state p { font-size: 15px; }
+
+  /* ─── FAB ─── */
+  .fab {
+    position: fixed;
+    bottom: 28px; right: 28px;
+    width: 62px; height: 62px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, var(--blush), #e0705a);
+    border: none; cursor: pointer;
+    box-shadow: 0 6px 24px rgba(242,166,138,0.55);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 26px;
+    color: white;
+    z-index: 200;
+    transition: all 0.25s cubic-bezier(0.34, 1.56, 0.64, 1);
+  }
+  .fab:hover { transform: scale(1.1) rotate(5deg); }
+  .fab:active { transform: scale(0.95); }
+
+  /* ─── MODAL ─── */
+  .modal-overlay {
+    position: fixed; inset: 0;
+    background: rgba(58,46,46,0.45);
+    backdrop-filter: blur(6px);
+    z-index: 300;
+    display: flex; align-items: flex-end; justify-content: center;
+    opacity: 0; pointer-events: none;
+    transition: opacity 0.25s ease;
+  }
+  .modal-overlay.open { opacity: 1; pointer-events: all; }
+
+  .modal {
+    background: var(--white);
+    border-radius: 28px 28px 0 0;
+    padding: 12px 24px 40px;
+    width: 100%; max-width: 680px;
+    transform: translateY(100%);
+    transition: transform 0.35s cubic-bezier(0.34, 1.2, 0.64, 1);
+    max-height: 90vh; overflow-y: auto;
+  }
+  .modal-overlay.open .modal { transform: translateY(0); }
+
+  .modal-handle {
+    width: 40px; height: 4px;
+    background: rgba(58,46,46,0.15);
+    border-radius: 4px;
+    margin: 8px auto 20px;
+  }
+  .modal-title {
+    font-family: 'Playfair Display', serif;
+    font-size: 22px; margin-bottom: 24px;
+    color: var(--text-dark);
+  }
+
+  /* Activity type selector */
+  .type-grid {
+    display: grid; grid-template-columns: repeat(3, 1fr);
+    gap: 10px; margin-bottom: 24px;
+  }
+  @media (min-width: 480px) { .type-grid { grid-template-columns: repeat(5, 1fr); } }
+
+  .type-option {
+    aspect-ratio: 1;
+    border-radius: 18px;
+    border: 2px solid transparent;
+    background: var(--cream);
+    display: flex; flex-direction: column; align-items: center; justify-content: center;
+    gap: 6px;
+    cursor: pointer;
+    transition: all 0.2s;
+    font-size: 11px; font-weight: 500; color: var(--text-mid);
+  }
+  .type-option .type-emoji { font-size: 26px; }
+  .type-option:hover { transform: scale(1.04); }
+  .type-option.selected { border-color: var(--blush); background: rgba(242,166,138,0.12); color: var(--text-dark); }
+  .type-option[data-type="coco"].selected { border-color: var(--goldenrod); background: rgba(232,165,58,0.1); }
+  .type-option[data-type="xixi"].selected { border-color: var(--sky); background: rgba(168,200,220,0.15); }
+  .type-option[data-type="amamentacao"].selected { border-color: var(--blush); background: rgba(242,166,138,0.12); }
+  .type-option[data-type="banho"].selected { border-color: var(--sage); background: rgba(154,184,154,0.15); }
+  .type-option[data-type="sono"].selected { border-color: var(--lavender); background: rgba(196,181,212,0.2); }
+
+  /* Form fields */
+  .form-group { margin-bottom: 18px; }
+  .form-label {
+    display: block; font-size: 12px; font-weight: 500;
+    text-transform: uppercase; letter-spacing: 1px;
+    color: var(--text-light); margin-bottom: 8px;
+  }
+  .form-input {
+    width: 100%;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 15px;
+    background: var(--cream);
+    border: 1.5px solid rgba(107,85,85,0.12);
+    border-radius: 12px;
+    padding: 12px 14px;
+    color: var(--text-dark);
+    transition: border-color 0.2s;
+    outline: none;
+  }
+  .form-input:focus { border-color: var(--blush); }
+  .form-select { appearance: none; background-image: url("data:image/svg+xml,%3Csvg width='14' height='8' viewBox='0 0 14 8' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M1 1L7 7L13 1' stroke='%239e8888' stroke-width='1.5' stroke-linecap='round'/%3E%3C/svg%3E"); background-repeat: no-repeat; background-position: right 14px center; padding-right: 36px; }
+
+  /* Textura options */
+  .textura-grid {
+    display: grid; grid-template-columns: repeat(3, 1fr);
+    gap: 8px;
+  }
+  .textura-btn {
+    padding: 10px 6px;
+    border-radius: 10px;
+    border: 1.5px solid rgba(107,85,85,0.12);
+    background: var(--cream);
+    cursor: pointer;
+    font-size: 12px; font-weight: 500; color: var(--text-mid);
+    text-align: center; transition: all 0.18s;
+  }
+  .textura-btn:hover { border-color: var(--goldenrod); color: var(--text-dark); }
+  .textura-btn.selected { border-color: var(--goldenrod); background: rgba(232,165,58,0.1); color: #9a6a10; font-weight: 600; }
+
+  .time-row {
+    display: flex; gap: 10px; align-items: center;
+  }
+  .time-row .form-input { flex: 1; }
+  .now-btn {
+    white-space: nowrap;
+    background: var(--cream);
+    border: 1.5px solid rgba(107,85,85,0.15);
+    border-radius: 10px;
+    padding: 11px 14px;
+    font-size: 13px; cursor: pointer; color: var(--text-mid);
+    transition: all 0.18s;
+  }
+  .now-btn:hover { border-color: var(--blush); color: var(--blush); }
+
+  .modal-footer { display: flex; gap: 10px; margin-top: 28px; }
+  .modal-footer .btn { flex: 1; justify-content: center; padding: 14px; font-size: 15px; }
+
+  /* ─── BABY MODAL ─── */
+  .baby-colors {
+    display: flex; gap: 8px; flex-wrap: wrap; margin-top: 10px;
+  }
+  .color-dot {
+    width: 30px; height: 30px; border-radius: 50%;
+    cursor: pointer; border: 3px solid transparent;
+    transition: transform 0.2s;
+  }
+  .color-dot:hover { transform: scale(1.15); }
+  .color-dot.selected { border-color: var(--text-dark); }
+
+  /* ─── DATA SECTION ─── */
+  .data-section {
+    background: var(--card-bg);
+    border-radius: 20px;
+    padding: 20px;
+    margin-top: 32px;
+    border: 1px solid rgba(244,201,160,0.3);
+    box-shadow: var(--shadow);
+  }
+  .data-section-title {
+    font-family: 'Playfair Display', serif;
+    font-size: 16px; margin-bottom: 16px;
+    color: var(--text-dark);
+  }
+  .data-btns { display: flex; gap: 10px; flex-wrap: wrap; }
+  .data-btns .btn { font-size: 13px; }
+
+  .filter-row {
+    display: flex; gap: 8px; margin-bottom: 16px; flex-wrap: wrap;
+  }
+  .filter-chip {
+    padding: 6px 14px;
+    border-radius: 100px;
+    border: 1.5px solid rgba(107,85,85,0.15);
+    background: transparent;
+    font-size: 12px; font-weight: 500; color: var(--text-mid);
+    cursor: pointer; transition: all 0.18s;
+  }
+  .filter-chip.active {
+    background: var(--text-dark); color: white; border-color: var(--text-dark);
+  }
+
+  /* ─── TOAST ─── */
+  .toast {
+    position: fixed; bottom: 100px; left: 50%; transform: translateX(-50%) translateY(20px);
+    background: var(--text-dark); color: white;
+    border-radius: 100px; padding: 12px 22px;
+    font-size: 13px; font-weight: 500;
+    z-index: 500;
+    opacity: 0; transition: all 0.3s;
+    white-space: nowrap; pointer-events: none;
+  }
+  .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+
+  .sono-row { display: flex; gap: 10px; }
+  .sono-row .form-group { flex: 1; }
+
+  /* date separator */
+  .date-sep {
+    display: flex; align-items: center; gap: 12px;
+    margin: 20px 0 12px;
+  }
+  .date-sep-line { flex: 1; height: 1px; background: rgba(107,85,85,0.1); }
+  .date-sep-label {
+    font-size: 11px; font-weight: 600; text-transform: uppercase;
+    letter-spacing: 1.2px; color: var(--text-light);
+    white-space: nowrap;
+  }
+
+  /* no baby state */
+  .no-baby {
+    text-align: center; padding: 60px 20px;
+    color: var(--text-light);
+  }
+  .no-baby .no-baby-icon { font-size: 56px; margin-bottom: 14px; }
+  .no-baby h3 { font-family: 'Playfair Display', serif; font-size: 20px; color: var(--text-dark); margin-bottom: 8px; }
+  .no-baby p { font-size: 14px; margin-bottom: 20px; }
+
+  /* hidden file input */
+  #fileImport { display: none; }
+</style>
+</head>
+<body>
+
+<!-- HEADER -->
+<header>
+  <div class="header-brand">
+    <div class="brand-icon">🍼</div>
+    <div class="brand-name">bebê <span>diário</span></div>
+  </div>
+  <div class="header-actions">
+    <button class="btn btn-outline btn-sm" id="exportBtn">⬇ Exportar</button>
+    <button class="btn btn-outline btn-sm" id="importBtnTrigger">⬆ Importar</button>
+    <input type="file" id="fileImport" accept=".json">
+  </div>
+</header>
+
+<main>
+  <!-- BABY BAR -->
+  <div class="baby-bar" id="babyBar">
+    <div class="add-baby" id="addBabyBtn" title="Adicionar bebê">＋</div>
+  </div>
+
+  <!-- NO BABY STATE -->
+  <div class="no-baby" id="noBabyState">
+    <div class="no-baby-icon">👶</div>
+    <h3>Olá, mamãe ou papai!</h3>
+    <p>Adicione seu bebê para começar a registrar as atividades do dia.</p>
+    <button class="btn btn-primary" id="addFirstBaby">＋ Adicionar bebê</button>
+  </div>
+
+  <!-- BABY CONTENT (shown when baby selected) -->
+  <div id="babyContent" style="display:none">
+
+    <!-- TODAY SUMMARY -->
+    <div class="today-card">
+      <div class="today-label">hoje</div>
+      <div class="today-date" id="todayDate"></div>
+      <div class="stats-row" id="statsRow"></div>
+    </div>
+
+    <!-- FILTER ROW -->
+    <div class="filter-row" id="filterRow">
+      <button class="filter-chip active" data-filter="all">Todas</button>
+      <button class="filter-chip" data-filter="coco">💩 Cocô</button>
+      <button class="filter-chip" data-filter="xixi">💧 Xixi</button>
+      <button class="filter-chip" data-filter="amamentacao">🤱 Amamentação</button>
+      <button class="filter-chip" data-filter="banho">🛁 Banho</button>
+      <button class="filter-chip" data-filter="sono">😴 Sono</button>
+    </div>
+
+    <!-- ACTIVITY LIST -->
+    <div class="section-header">
+      <div class="section-title">Registros</div>
+    </div>
+    <div class="activity-list" id="activityList"></div>
+
+    <!-- DATA SECTION -->
+    <div class="data-section">
+      <div class="data-section-title">💾 Dados & Backup</div>
+      <div class="data-btns">
+        <button class="btn btn-outline" id="exportBtn2">⬇ Exportar JSON</button>
+        <button class="btn btn-outline" id="importBtnTrigger2">⬆ Importar JSON</button>
+        <button class="btn btn-ghost" style="color:#c0392b" id="clearDataBtn">🗑 Limpar tudo</button>
+      </div>
+    </div>
+  </div>
+</main>
+
+<!-- FAB -->
+<button class="fab" id="fabBtn" title="Registrar atividade">＋</button>
+
+<!-- TOAST -->
+<div class="toast" id="toast"></div>
+
+<!-- ─── MODAL: ADD ACTIVITY ─── -->
+<div class="modal-overlay" id="activityModal">
+  <div class="modal">
+    <div class="modal-handle"></div>
+    <div class="modal-title">Registrar atividade</div>
+
+    <!-- Type selector -->
+    <div class="form-group">
+      <label class="form-label">Tipo de atividade</label>
+      <div class="type-grid">
+        <div class="type-option" data-type="coco"><span class="type-emoji">💩</span>Cocô</div>
+        <div class="type-option" data-type="xixi"><span class="type-emoji">💧</span>Xixi</div>
+        <div class="type-option" data-type="amamentacao"><span class="type-emoji">🤱</span>Amamentação</div>
+        <div class="type-option" data-type="banho"><span class="type-emoji">🛁</span>Banho</div>
+        <div class="type-option" data-type="sono"><span class="type-emoji">😴</span>Sono</div>
+      </div>
+    </div>
+
+    <!-- TIME -->
+    <div class="form-group" id="timeFieldGroup">
+      <label class="form-label">Horário</label>
+      <div class="time-row">
+        <input type="datetime-local" class="form-input" id="activityTime">
+        <button class="now-btn" id="setNowBtn">Agora</button>
+      </div>
+    </div>
+
+    <!-- COCO: TEXTURA -->
+    <div class="form-group" id="texturaGroup" style="display:none">
+      <label class="form-label">Textura do cocô</label>
+      <div class="textura-grid">
+        <button class="textura-btn" data-textura="líquido">💧 Líquido</button>
+        <button class="textura-btn" data-textura="pastoso">🌊 Pastoso</button>
+        <button class="textura-btn" data-textura="mole">🍮 Mole</button>
+        <button class="textura-btn" data-textura="normal">✅ Normal</button>
+        <button class="textura-btn" data-textura="duro">🪨 Duro</button>
+        <button class="textura-btn" data-textura="granulado">🌾 Granulado</button>
+      </div>
+    </div>
+
+    <!-- AMAMENTACAO: SIDE + DURATION -->
+    <div class="form-group" id="amamentacaoGroup" style="display:none">
+      <label class="form-label">Detalhes da amamentação</label>
+      <div class="time-row" style="margin-bottom:10px">
+        <select class="form-input form-select" id="amamentacaoLado">
+          <option value="">Qual lado?</option>
+          <option value="esquerdo">🫶 Esquerdo</option>
+          <option value="direito">🫶 Direito</option>
+          <option value="ambos">🫶 Ambos</option>
+        </select>
+      </div>
+      <div class="time-row">
+        <input type="number" class="form-input" id="amamentacaoMin" placeholder="Duração (min)" min="0">
+      </div>
+    </div>
+
+    <!-- SONO: START + END -->
+    <div id="sonoGroup" style="display:none">
+      <div class="sono-row">
+        <div class="form-group">
+          <label class="form-label">Início do sono</label>
+          <input type="datetime-local" class="form-input" id="sonoStart">
+        </div>
+        <div class="form-group">
+          <label class="form-label">Fim do sono</label>
+          <input type="datetime-local" class="form-input" id="sonoEnd">
+        </div>
+      </div>
+    </div>
+
+    <!-- NOTES -->
+    <div class="form-group">
+      <label class="form-label">Observações (opcional)</label>
+      <input type="text" class="form-input" id="activityNotes" placeholder="Adicionar nota...">
+    </div>
+
+    <div class="modal-footer">
+      <button class="btn btn-outline" id="cancelActivity">Cancelar</button>
+      <button class="btn btn-primary" id="saveActivity">Salvar registro ✓</button>
+    </div>
+  </div>
+</div>
+
+<!-- ─── MODAL: ADD BABY ─── -->
+<div class="modal-overlay" id="babyModal">
+  <div class="modal">
+    <div class="modal-handle"></div>
+    <div class="modal-title">Adicionar bebê</div>
+    <div class="form-group">
+      <label class="form-label">Nome do bebê</label>
+      <input type="text" class="form-input" id="babyNameInput" placeholder="Ex: Aurora, Theo...">
+    </div>
+    <div class="form-group">
+      <label class="form-label">Cor do avatar</label>
+      <div class="baby-colors">
+        <div class="color-dot selected" data-color="#f2a68a" style="background:#f2a68a"></div>
+        <div class="color-dot" data-color="#a8c8dc" style="background:#a8c8dc"></div>
+        <div class="color-dot" data-color="#c4b5d4" style="background:#c4b5d4"></div>
+        <div class="color-dot" data-color="#9ab89a" style="background:#9ab89a"></div>
+        <div class="color-dot" data-color="#f4c9a0" style="background:#f4c9a0"></div>
+        <div class="color-dot" data-color="#e8d5b0" style="background:#e8d5b0"></div>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-outline" id="cancelBaby">Cancelar</button>
+      <button class="btn btn-primary" id="saveBaby">Adicionar bebê ✓</button>
+    </div>
+  </div>
+</div>
+
+<script>
+// ═══════════════════════════════
+//  STATE & STORAGE
+// ═══════════════════════════════
+let state = {
+  babies: [],
+  activities: [],
+  currentBabyId: null,
+};
+
+const STORAGE_KEY = 'bebe_diario_v1';
+
+function loadState() {
+  try {
+    const raw = localStorage.getItem(STORAGE_KEY);
+    if (raw) state = JSON.parse(raw);
+  } catch(e) { console.error(e); }
+}
+
+function saveState() {
+  localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+}
+
+// ═══════════════════════════════
+//  HELPERS
+// ═══════════════════════════════
+function genId() { return Date.now().toString(36) + Math.random().toString(36).slice(2); }
+
+function formatTime(iso) {
+  const d = new Date(iso);
+  return d.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' });
+}
+function formatDate(iso) {
+  const d = new Date(iso);
+  const today = new Date();
+  const yesterday = new Date(today); yesterday.setDate(today.getDate()-1);
+  if (sameDay(d, today)) return 'Hoje';
+  if (sameDay(d, yesterday)) return 'Ontem';
+  return d.toLocaleDateString('pt-BR', { day: '2-digit', month: 'long' });
+}
+function sameDay(a, b) {
+  return a.getFullYear()===b.getFullYear() && a.getMonth()===b.getMonth() && a.getDate()===b.getDate();
+}
+function nowLocalISO() {
+  const d = new Date();
+  const pad = n => String(n).padStart(2,'0');
+  return `${d.getFullYear()}-${pad(d.getMonth()+1)}-${pad(d.getDate())}T${pad(d.getHours())}:${pad(d.getMinutes())}`;
+}
+
+const typeConfig = {
+  coco:          { emoji: '💩', label: 'Cocô',         color: '#e8a53a' },
+  xixi:          { emoji: '💧', label: 'Xixi',          color: '#a8c8dc' },
+  amamentacao:   { emoji: '🤱', label: 'Amamentação',   color: '#f2a68a' },
+  banho:         { emoji: '🛁', label: 'Banho',         color: '#9ab89a' },
+  sono:          { emoji: '😴', label: 'Sono',          color: '#c4b5d4' },
+};
+
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 2600);
+}
+
+// ═══════════════════════════════
+//  RENDER
+// ═══════════════════════════════
+let currentFilter = 'all';
+
+function render() {
+  renderBabyBar();
+  const hasBaby = state.babies.length > 0 && state.currentBabyId;
+  document.getElementById('noBabyState').style.display = hasBaby ? 'none' : '';
+  document.getElementById('babyContent').style.display = hasBaby ? '' : 'none';
+  document.getElementById('fabBtn').style.display = hasBaby ? '' : 'none';
+  if (hasBaby) {
+    renderToday();
+    renderActivities();
+  }
+}
+
+function renderBabyBar() {
+  const bar = document.getElementById('babyBar');
+  bar.innerHTML = '';
+  state.babies.forEach(b => {
+    const chip = document.createElement('div');
+    chip.className = 'baby-chip' + (b.id === state.currentBabyId ? ' active' : '');
+    chip.innerHTML = `<div class="baby-avatar" style="background:${b.color}22">${b.emoji || '👶'}</div><span>${b.name}</span>`;
+    chip.addEventListener('click', () => { state.currentBabyId = b.id; saveState(); render(); });
+    bar.appendChild(chip);
+    // right-click to remove
+    chip.addEventListener('contextmenu', (e) => {
+      e.preventDefault();
+      if (confirm(`Remover ${b.name}?`)) {
+        state.babies = state.babies.filter(x => x.id !== b.id);
+        state.activities = state.activities.filter(x => x.babyId !== b.id);
+        if (state.currentBabyId === b.id) state.currentBabyId = state.babies[0]?.id || null;
+        saveState(); render();
+      }
+    });
+  });
+  const add = document.createElement('div');
+  add.className = 'add-baby';
+  add.textContent = '＋';
+  add.addEventListener('click', openBabyModal);
+  bar.appendChild(add);
+}
+
+function renderToday() {
+  // Date
+  const nd = document.getElementById('todayDate');
+  const today = new Date();
+  nd.textContent = today.toLocaleDateString('pt-BR', { weekday: 'long', day: 'numeric', month: 'long' });
+
+  // Stats
+  const todayActs = state.activities.filter(a =>
+    a.babyId === state.currentBabyId && sameDay(new Date(a.time || a.timestamp), today)
+  );
+  const counts = { coco:0, xixi:0, amamentacao:0, banho:0, sono:0 };
+  todayActs.forEach(a => { if (counts[a.type] !== undefined) counts[a.type]++; });
+
+  const sr = document.getElementById('statsRow');
+  sr.innerHTML = '';
+  Object.entries(counts).forEach(([type, count]) => {
+    if (count === 0) return;
+    const cfg = typeConfig[type];
+    const pill = document.createElement('div');
+    pill.className = 'stat-pill';
+    pill.innerHTML = `${cfg.emoji} <span class="count">${count}</span> <span style="color:var(--text-light);font-size:12px">${cfg.label}</span>`;
+    sr.appendChild(pill);
+  });
+  if (sr.innerHTML === '') {
+    sr.innerHTML = '<div style="font-size:13px;color:var(--text-light)">Nenhuma atividade hoje ainda ☁️</div>';
+  }
+}
+
+function renderActivities() {
+  const list = document.getElementById('activityList');
+  list.innerHTML = '';
+
+  let acts = state.activities.filter(a => a.babyId === state.currentBabyId);
+  if (currentFilter !== 'all') acts = acts.filter(a => a.type === currentFilter);
+  acts = acts.slice().sort((a,b) => new Date(b.time||b.timestamp) - new Date(a.time||a.timestamp));
+
+  if (acts.length === 0) {
+    list.innerHTML = `<div class="empty-state"><div class="empty-icon">${currentFilter==='all'?'📋':typeConfig[currentFilter]?.emoji||'📋'}</div><p>Nenhum registro ainda.<br>Toque no <strong>+</strong> para adicionar.</p></div>`;
+    return;
+  }
+
+  let lastDateLabel = null;
+  acts.forEach(act => {
+    const dateLabel = formatDate(act.time || act.timestamp);
+    if (dateLabel !== lastDateLabel) {
+      lastDateLabel = dateLabel;
+      const sep = document.createElement('div');
+      sep.className = 'date-sep';
+      sep.innerHTML = `<div class="date-sep-line"></div><div class="date-sep-label">${dateLabel}</div><div class="date-sep-line"></div>`;
+      list.appendChild(sep);
+    }
+    list.appendChild(buildActivityCard(act));
+  });
+}
+
+function buildActivityCard(act) {
+  const cfg = typeConfig[act.type] || {};
+  const card = document.createElement('div');
+  card.className = 'activity-card';
+  card.setAttribute('data-type', act.type);
+
+  let metaHtml = `<span class="activity-time">⏰ ${formatTime(act.time || act.timestamp)}</span>`;
+
+  if (act.type === 'coco' && act.textura) {
+    metaHtml += `<span class="textura-badge">🧾 ${act.textura}</span>`;
+  }
+  if (act.type === 'amamentacao') {
+    if (act.lado) metaHtml += `<span>🫶 ${act.lado}</span>`;
+    if (act.duracao) metaHtml += `<span>⏱ ${act.duracao} min</span>`;
+  }
+  if (act.type === 'sono') {
+    if (act.sonoEnd) {
+      const mins = Math.round((new Date(act.sonoEnd)-new Date(act.sonoStart||act.time))/60000);
+      const h = Math.floor(mins/60), m = mins%60;
+      metaHtml += `<span>💤 ${h}h ${m}min</span>`;
+    }
+  }
+  if (act.notes) metaHtml += `<span style="font-style:italic;color:var(--text-light)">📝 ${act.notes}</span>`;
+
+  card.innerHTML = `
+    <div class="activity-icon-wrap">${cfg.emoji||'📋'}</div>
+    <div class="activity-info">
+      <div class="activity-title">${cfg.label||act.type}</div>
+      <div class="activity-meta">${metaHtml}</div>
+    </div>
+    <button class="delete-btn" title="Remover">✕</button>
+  `;
+  card.querySelector('.delete-btn').addEventListener('click', () => {
+    state.activities = state.activities.filter(a => a.id !== act.id);
+    saveState(); render();
+    showToast('Registro removido.');
+  });
+  return card;
+}
+
+// ═══════════════════════════════
+//  MODALS
+// ═══════════════════════════════
+function openModal(id) { document.getElementById(id).classList.add('open'); }
+function closeModal(id) { document.getElementById(id).classList.remove('open'); }
+
+// ── ACTIVITY MODAL ──
+let selectedType = null;
+let selectedTextura = null;
+
+function openActivityModal() {
+  selectedType = null; selectedTextura = null;
+  document.querySelectorAll('.type-option').forEach(o => o.classList.remove('selected'));
+  document.querySelectorAll('.textura-btn').forEach(b => b.classList.remove('selected'));
+  document.getElementById('activityTime').value = nowLocalISO();
+  document.getElementById('activityNotes').value = '';
+  document.getElementById('amamentacaoLado').value = '';
+  document.getElementById('amamentacaoMin').value = '';
+  document.getElementById('sonoStart').value = nowLocalISO();
+  document.getElementById('sonoEnd').value = '';
+  document.getElementById('texturaGroup').style.display = 'none';
+  document.getElementById('amamentacaoGroup').style.display = 'none';
+  document.getElementById('sonoGroup').style.display = 'none';
+  document.getElementById('timeFieldGroup').style.display = '';
+  openModal('activityModal');
+}
+
+document.querySelectorAll('.type-option').forEach(opt => {
+  opt.addEventListener('click', () => {
+    document.querySelectorAll('.type-option').forEach(o => o.classList.remove('selected'));
+    opt.classList.add('selected');
+    selectedType = opt.dataset.type;
+    document.getElementById('texturaGroup').style.display = selectedType==='coco' ? '' : 'none';
+    document.getElementById('amamentacaoGroup').style.display = selectedType==='amamentacao' ? '' : 'none';
+    document.getElementById('sonoGroup').style.display = selectedType==='sono' ? '' : 'none';
+    document.getElementById('timeFieldGroup').style.display = selectedType==='sono' ? 'none' : '';
+  });
+});
+
+document.querySelectorAll('.textura-btn').forEach(btn => {
+  btn.addEventListener('click', () => {
+    document.querySelectorAll('.textura-btn').forEach(b => b.classList.remove('selected'));
+    btn.classList.add('selected');
+    selectedTextura = btn.dataset.textura;
+  });
+});
+
+document.getElementById('setNowBtn').addEventListener('click', () => {
+  document.getElementById('activityTime').value = nowLocalISO();
+});
+
+document.getElementById('cancelActivity').addEventListener('click', () => closeModal('activityModal'));
+document.getElementById('activityModal').addEventListener('click', (e) => {
+  if (e.target === document.getElementById('activityModal')) closeModal('activityModal');
+});
+
+document.getElementById('saveActivity').addEventListener('click', () => {
+  if (!selectedType) { showToast('Selecione um tipo de atividade.'); return; }
+
+  const act = {
+    id: genId(),
+    babyId: state.currentBabyId,
+    type: selectedType,
+    time: selectedType === 'sono' ? document.getElementById('sonoStart').value : document.getElementById('activityTime').value,
+    timestamp: new Date().toISOString(),
+    notes: document.getElementById('activityNotes').value.trim() || null,
+  };
+
+  if (selectedType === 'coco' && selectedTextura) act.textura = selectedTextura;
+  if (selectedType === 'amamentacao') {
+    const lado = document.getElementById('amamentacaoLado').value;
+    const dur = document.getElementById('amamentacaoMin').value;
+    if (lado) act.lado = lado;
+    if (dur) act.duracao = parseInt(dur);
+  }
+  if (selectedType === 'sono') {
+    act.sonoStart = document.getElementById('sonoStart').value;
+    const end = document.getElementById('sonoEnd').value;
+    if (end) act.sonoEnd = end;
+  }
+
+  state.activities.unshift(act);
+  saveState();
+  closeModal('activityModal');
+  render();
+  showToast(`${typeConfig[selectedType].emoji} ${typeConfig[selectedType].label} registrado!`);
+});
+
+// ── BABY MODAL ──
+let selectedBabyColor = '#f2a68a';
+
+function openBabyModal() {
+  document.getElementById('babyNameInput').value = '';
+  selectedBabyColor = '#f2a68a';
+  document.querySelectorAll('.color-dot').forEach(d => {
+    d.classList.toggle('selected', d.dataset.color === selectedBabyColor);
+  });
+  openModal('babyModal');
+}
+
+document.querySelectorAll('.color-dot').forEach(dot => {
+  dot.addEventListener('click', () => {
+    document.querySelectorAll('.color-dot').forEach(d => d.classList.remove('selected'));
+    dot.classList.add('selected');
+    selectedBabyColor = dot.dataset.color;
+  });
+});
+
+document.getElementById('cancelBaby').addEventListener('click', () => closeModal('babyModal'));
+document.getElementById('babyModal').addEventListener('click', (e) => {
+  if (e.target === document.getElementById('babyModal')) closeModal('babyModal');
+});
+
+const babyEmojis = ['👶','🍼','🌸','⭐','🌙','🦋','🌈','🐣'];
+document.getElementById('saveBaby').addEventListener('click', () => {
+  const name = document.getElementById('babyNameInput').value.trim();
+  if (!name) { showToast('Digite o nome do bebê.'); return; }
+  const baby = { id: genId(), name, color: selectedBabyColor, emoji: babyEmojis[Math.floor(Math.random()*babyEmojis.length)] };
+  state.babies.push(baby);
+  state.currentBabyId = baby.id;
+  saveState();
+  closeModal('babyModal');
+  render();
+  showToast(`${baby.emoji} ${baby.name} adicionado(a)!`);
+});
+
+// ═══════════════════════════════
+//  FAB & BUTTONS
+// ═══════════════════════════════
+document.getElementById('fabBtn').addEventListener('click', openActivityModal);
+document.getElementById('addBabyBtn').addEventListener('click', openBabyModal);
+document.getElementById('addFirstBaby').addEventListener('click', openBabyModal);
+
+// FILTER
+document.getElementById('filterRow').addEventListener('click', (e) => {
+  const chip = e.target.closest('.filter-chip');
+  if (!chip) return;
+  document.querySelectorAll('.filter-chip').forEach(c => c.classList.remove('active'));
+  chip.classList.add('active');
+  currentFilter = chip.dataset.filter;
+  renderActivities();
+});
+
+// ═══════════════════════════════
+//  EXPORT / IMPORT
+// ═══════════════════════════════
+function exportData() {
+  const json = JSON.stringify(state, null, 2);
+  const blob = new Blob([json], { type: 'application/json' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  const dt = new Date().toLocaleDateString('pt-BR').replace(/\//g,'-');
+  a.href = url; a.download = `bebe-diario-backup-${dt}.json`;
+  a.click(); URL.revokeObjectURL(url);
+  showToast('📦 Backup exportado com sucesso!');
+}
+
+function triggerImport() { document.getElementById('fileImport').click(); }
+
+document.getElementById('fileImport').addEventListener('change', (e) => {
+  const file = e.target.files[0]; if (!file) return;
+  const reader = new FileReader();
+  reader.onload = (ev) => {
+    try {
+      const imported = JSON.parse(ev.target.result);
+      if (!imported.babies || !imported.activities) throw new Error('Formato inválido');
+
+      const merge = confirm(`Importar ${imported.babies.length} bebê(s) e ${imported.activities.length} registro(s)?\n\nEscolha:\nOK = Mesclar com dados existentes\nCancelar = Substituir tudo`);
+      if (merge) {
+        // merge: add babies/activities that don't exist yet
+        imported.babies.forEach(b => { if (!state.babies.find(x => x.id===b.id)) state.babies.push(b); });
+        imported.activities.forEach(a => { if (!state.activities.find(x => x.id===a.id)) state.activities.push(a); });
+      } else {
+        if (!confirm('Tem certeza? Isso vai apagar todos os dados atuais!')) { e.target.value=''; return; }
+        state = imported;
+      }
+      if (!state.currentBabyId && state.babies.length > 0) state.currentBabyId = state.babies[0].id;
+      saveState(); render();
+      showToast(`✅ Dados importados com sucesso!`);
+    } catch(err) {
+      showToast('❌ Arquivo inválido. Tente novamente.');
+    }
+    e.target.value = '';
+  };
+  reader.readAsText(file);
+});
+
+['exportBtn','exportBtn2'].forEach(id => document.getElementById(id)?.addEventListener('click', exportData));
+['importBtnTrigger','importBtnTrigger2'].forEach(id => document.getElementById(id)?.addEventListener('click', triggerImport));
+
+document.getElementById('clearDataBtn').addEventListener('click', () => {
+  if (confirm('Apagar TODOS os dados deste dispositivo?\nEsta ação não pode ser desfeita.')) {
+    state = { babies: [], activities: [], currentBabyId: null };
+    saveState(); render();
+    showToast('🗑 Dados apagados.');
+  }
+});
+
+// ═══════════════════════════════
+//  INIT
+// ═══════════════════════════════
+loadState();
+render();
+
+// Update today's date label every minute
+setInterval(() => { if (state.currentBabyId) renderToday(); }, 60000);
+</script>
+</body>
+</html>
